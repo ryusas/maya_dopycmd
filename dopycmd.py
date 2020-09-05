@@ -43,12 +43,16 @@ class dopycmd(api.MPxCommand):
         return True
 
     def doIt(self, args):
-        self._doit = _fromptr(long(args.asString(0), 0))
+        do = _fromptr(long(args.asString(0), 0))
         self._undoit = _fromptr(long(args.asString(1), 0))
-        self._doit()
+        if args.length() < 3:
+            self._redoit = do
+        else:
+            self._redoit = _fromptr(long(args.asString(2), 0)) or do
+        do()
 
     def redoIt(self):
-        self._doit()
+        self._redoit()
 
     def undoIt(self):
         self._undoit()
@@ -61,7 +65,7 @@ def initializePlugin(mobj):
         except:
             raise RuntimeError('Failed to register command: ' + cls.name)
 
-    pl = api.MFnPlugin(mobj, 'Ryusuke Sasaki', '1.0.0')
+    pl = api.MFnPlugin(mobj, 'Ryusuke Sasaki', '1.0.1')
     registerCmd(dopycmd)
 
 
